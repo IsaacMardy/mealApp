@@ -8,6 +8,7 @@ import InputMeals from './Components/InputMeals';
 import DisplayMeals from './Components/DisplayMeals';
 import DisplayScedule from './Components/DisplaySchedule';
 import SelectSchedule from './Components/SelectSchedule';
+import DisplayIngredients from './Components/DisplayIngredients';
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
           <Route path="/DisplayScedule" element={<DisplayScedule/>}/>
           <Route path="/DisplayScedule/:ScheduleId" element={<DisplayScedule/>}/>
           <Route path="/SelectSchedule" element={<SelectSchedule/>}/>
+          <Route path="/DisplayIngredients" element={<DisplayIngredients/>}/>
         </Routes>
       </BrowserRouter>
     </div>
