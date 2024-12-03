@@ -33,7 +33,9 @@ function DisplayMeals() {
         fetchMeals();
     }, []);
 
-    // fix box and list size
+    /**
+     * update: align the ScrollingList and ScrollingBox components side by side
+     */
     return (
         <div>
             <h1>Meal Display</h1>
@@ -42,13 +44,24 @@ function DisplayMeals() {
             ) : error ? (
                 <p style={{ color: 'red' }}>{error}</p>
             ) : (
-                <ScrollingList 
-                    items={meals} 
-                    selectedItem={sharedData} 
-                    updateSelectedItem={updateSharedData} 
-                />
+                <div
+                    style={{
+                        display: 'flex',
+                        gap: '20px',
+                        alignItems: 'flex-start',
+                    }}
+                >
+                    {/* Scrolling List */}
+                    <ScrollingList 
+                        items={meals} 
+                        selectedItem={sharedData} 
+                        updateSelectedItem={updateSharedData} 
+                    />
+                    
+                    {/* Scrolling Box */}
+                    <ScrollingBox selectedItem={sharedData} />
+                </div>
             )}
-            <ScrollingBox selectedItem={sharedData}></ScrollingBox>
         </div>
     );
 }

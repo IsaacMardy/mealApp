@@ -6,7 +6,7 @@ function DisplaySCedule() {
 
     return (
         <div>
-            <h1>Editable Table</h1>
+            <h1>Meal Schedule</h1>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                     <tr>

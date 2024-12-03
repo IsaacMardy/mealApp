@@ -11,6 +11,7 @@ function Register() {
     const [userID, setUserID] = useState("");
     const [password, setPassword] = useState("");
 
+    //need signup message
       const handleSignUp = (event) => {
         event.preventDefault()
         const newUser = {
@@ -20,7 +21,7 @@ function Register() {
           password:password
         }
         register(newUser);
-      }
+      };
 
       //add diatitian check box
     return (
