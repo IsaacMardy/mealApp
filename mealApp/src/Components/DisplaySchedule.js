@@ -1,8 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function DisplaySCedule() {
 
-    const [schedule, setSchedule] = useState([]); // State to hold fetched meals
+    // const [schedule, setSchedule] = useState([]); // State to hold fetched meals
+    const [mealList, setMealList] = useState([]);
+
+    useEffect(() => {
+        const meals = {breakFast:{}, lunch:{}, dinner:{}}
+        const days = {
+            Sunday: meals,
+            Monday: meals,
+            Tuesday: meals,
+            Wednesday: meals,
+            Thursday: meals,
+            Friday: meals,
+            Saturday: meals
+        };
+
+        setMealList(days)
+        console.log(days)
+    },[])
 
     return (
         <div>
@@ -19,12 +36,6 @@ function DisplaySCedule() {
                 <tbody>
                     <tr>
                         <td>Sunday Breakfast</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Sunday Lunch</td>
                         <td></td>
                         <td></td>
                         <td></td>
