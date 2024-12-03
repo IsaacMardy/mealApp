@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getSchedule } from '../Services/SelectedSchedule';
 import { Link } from "react-router-dom";
+import {saveSchedule} from "../Services/UserServices"
 
 function DisplaySchedule() {
     const [schedule, setSchedule] = useState({});
@@ -9,6 +10,10 @@ function DisplaySchedule() {
         const fetchedSchedule = getSchedule(); // Retrieve schedule from singleton
         setSchedule(fetchedSchedule); // Set the state with the fetched schedule
     }, []); // Empty dependency array ensures this runs only once
+
+    const savingSchedule = () => {
+        saveSchedule(schedule)
+    } 
 
     return (
         <div>
@@ -32,6 +37,7 @@ function DisplaySchedule() {
                     </tr>
                 </tbody>
             </table>
+            <button onClick={savingSchedule}>Save</button>
         </div>
     );
 }
