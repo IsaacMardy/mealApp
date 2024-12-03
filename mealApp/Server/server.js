@@ -4,6 +4,9 @@ import jwt from 'jsonwebtoken';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 
+import Meal from './Schema/Meal.js';
+
+
 const app = express();
 const port = 5001;
 
@@ -63,18 +66,23 @@ app.get('/getAllUsers', async (req,res)=>{
 
 //meals
 app.post('/addMeal', async (req, res) => {
+    const { mealName, ingredients, day, mealType, userId } = req.body;
+
+    if (!mealName || !ingredients || !day || !mealType || !userId) {
+        return res.status(400).json({ error: 'All fields are required.' });
+    }
     try {
         const db = client.db('Mealdatabase');
-        const collection = db.collection('Meals')
-        const meal = await collection.findOne({ mealName: req.body.mealName });
-        if (meal) {
-            return res.status(400).json({ message: 'Meal name already exists' });
-        }else{
-            await collection.insertOne(req.body)}
-    }catch(err){
-        return res.status(500).json({ message: 'Internal server error' });
-    }}
-);
+        const collection = db.collection('Meals');
+        await collection.insertOne(req.body);
+        res.status(200).json({ message: 'Meal added successfully' });
+    } catch (error) {
+        console.error('Error adding meal:', error);
+        res.status(500).json({ error: 'Failed to add meal.' });
+    }
+});
+
+
 
 app.get('/getAllMeals', async (req,res)=>{
     try{
@@ -87,16 +95,22 @@ app.get('/getAllMeals', async (req,res)=>{
     }
 })
 
+app.get('/getUserMeals', async (req, res) => {
+    const userId = req.query.userId;
+    if (!ObjectId.isValid(userId)) {
+        return res.status(400).json({ error: 'Invalid userId format' });
+    }
 
-
-
-
-
-
-
-
-
-
+    try {
+        const db = client.db('Mealdatabase');
+        const collection = db.collection('Meals');
+        const meals = await collection.find({ userId: new ObjectId(userId) }).toArray();
+        res.status(200).json(meals);
+    } catch (error) {
+        console.error('Error fetching usermeals:', error);
+        res.status(500).json({ error: 'Failed to fetch usermeals' });
+    }
+});
 
 
 //new project route
