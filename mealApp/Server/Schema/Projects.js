@@ -1,0 +1,13 @@
+import mongoose from "mongoose";
+
+const ProjectSchema = new mongoose.Schema({
+    proj_name: String,
+    proj_desc: String,
+    prod_owner_id: String,
+    mgr_id: mongoose.Schema.Types.ObjectId,
+    team_id: String
+});
+
+const Project = mongoose.model("Project", ProjectSchema);
+
+export default Project;
