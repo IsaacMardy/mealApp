@@ -2,8 +2,12 @@ import React, { useEffect, useState } from 'react';
 import ScrollingList from './ScrollingList';
 import ScrollingBox from './ScrollingBox'
 import { getAllMeals } from '../Services/MealServices';
+import { Link } from "react-router-dom";
+import { addMealtoSchedule } from '../Services/SelectedSchedule';
+import { useParams } from 'react-router-dom';
 
 function DisplayMeals() {
+    const { Time } = useParams();
     const [meals, setMeals] = useState([]); // State to hold fetched meals
     const [sharedData, setSharedData] = useState(''); // State for selected meal
     const [loading, setLoading] = useState(true); // State to handle loading
@@ -33,6 +37,10 @@ function DisplayMeals() {
         fetchMeals();
     }, []);
 
+    const addMeal = (Time, sharedData) => {
+        addMealtoSchedule(Time, sharedData)
+    }
+
     // fix box and list size
     return (
         <div>
@@ -49,6 +57,7 @@ function DisplayMeals() {
                 />
             )}
             <ScrollingBox selectedItem={sharedData}></ScrollingBox>
+            <Link to="/DisplayScedule/" onClick={addMeal(Time,sharedData)}>Select</Link>
         </div>
     );
 }

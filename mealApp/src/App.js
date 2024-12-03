@@ -6,7 +6,7 @@ import NavBar from './Components/NavBar';
 import Home from './Components/Home';
 import InputMeals from './Components/InputMeals';
 import DisplayMeals from './Components/DisplayMeals';
-import DisplaySCedule from './Components/DisplaySchedule';
+import DisplayScedule from './Components/DisplaySchedule';
 import SelectSchedule from './Components/SelectSchedule';
 
 
@@ -23,7 +23,9 @@ function App() {
           <Route path="/Register" element={<Register/>}/>
           <Route path="/InputMeal" element={<InputMeals/>}/>
           <Route path="/DisplayMeals" element={<DisplayMeals/>}/>
-          <Route path="/DisplayScedule" element={<DisplaySCedule/>}/>
+          <Route path="/DisplayMeals/:Time" element={<DisplayMeals/>}/>
+          <Route path="/DisplayScedule" element={<DisplayScedule/>}/>
+          <Route path="/DisplayScedule/:ScheduleId" element={<DisplayScedule/>}/>
           <Route path="/SelectSchedule" element={<SelectSchedule/>}/>
         </Routes>
       </BrowserRouter>

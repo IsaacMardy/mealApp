@@ -1,25 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { getSchedule } from '../Services/SelectedSchedule';
+import { Link } from "react-router-dom";
 
-function DisplaySCedule() {
-
-    // const [schedule, setSchedule] = useState([]); // State to hold fetched meals
-    const [mealList, setMealList] = useState([]);
+function DisplaySchedule() {
+    const [schedule, setSchedule] = useState({});
 
     useEffect(() => {
-        const meals = {breakFast:{}, lunch:{}, dinner:{}}
-        const days = {
-            Sunday: meals,
-            Monday: meals,
-            Tuesday: meals,
-            Wednesday: meals,
-            Thursday: meals,
-            Friday: meals,
-            Saturday: meals
-        };
-
-        setMealList(days)
-        console.log(days)
-    },[])
+        const fetchedSchedule = getSchedule(); // Retrieve schedule from singleton
+        setSchedule(fetchedSchedule); // Set the state with the fetched schedule
+    }, []); // Empty dependency array ensures this runs only once
 
     return (
         <div>
@@ -36,8 +25,9 @@ function DisplaySCedule() {
                 <tbody>
                     <tr>
                         <td>Sunday Breakfast</td>
-                        <td></td>
-                        <td></td>
+                        {/* Check if Sunday exists and access index 0 safely */}
+                        <td>{schedule.Sunday?.[0]?.mealName || "No meal"}</td>
+                        <td><Link to="/DisplayMeals/Sunday0">Add Meal</Link></td>
                         <td></td>
                     </tr>
                 </tbody>
@@ -46,4 +36,4 @@ function DisplaySCedule() {
     );
 }
 
-export default DisplaySCedule;
+export default DisplaySchedule;
