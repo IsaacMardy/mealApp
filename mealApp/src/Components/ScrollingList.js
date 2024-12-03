@@ -7,8 +7,9 @@ function ScrollingList({ items, selectedItem, updateSelectedItem }) {
     return (
         <div 
             style={{
-                width: '300px',
-                height: '200px',
+                float:"left",
+                width: '40%', 
+                height: '100%',
                 overflowY: 'scroll',
                 border: '1px solid #ccc',
             }}

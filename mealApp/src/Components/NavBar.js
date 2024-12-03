@@ -16,9 +16,9 @@ function NavBar() {
   return (
     <nav className="navbar">
       {!isLoggedIn ? (
-        <h1><Link to="/Login" style={{ textDecoration: 'none', color: 'White' }}>Weekly Beast</Link></h1>
+        <h1><Link to="/Login" style={{ textDecoration: 'none', color: 'White' }}>Weekly Feast</Link></h1>
       ) : (
-        <h1><Link to="/Home" style={{ textDecoration: 'none', color: 'White' }}>Weekly Beast</Link></h1>
+        <h1><Link to="/Home" style={{ textDecoration: 'none', color: 'White' }}>Weekly Feast</Link></h1>
       )}
       <ul className="nav-links">
         {!isLoggedIn ? (
