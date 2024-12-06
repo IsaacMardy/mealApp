@@ -80,6 +80,26 @@ app.put('/updateSchedule', async (req, res) => {
     }
 })
 
+app.post('/addPersonalSchedule', async (req, res) => {
+    try {
+        const db = client.db('Mealdatabase');
+        const collection = db.collection('PersonalSchedule');
+
+        // Extract userId and modify it
+        const modifiedUserId = new ObjectId(req.body.userId); // Example modification
+        const updatedBody = { ...req.body, userId: modifiedUserId };
+
+        // Insert the updated object into the database
+        const result = await collection.insertOne(updatedBody);
+
+        return res.status(200).json({ success: true, result: result });
+    } catch (error) {
+        console.error('Error in adding personal schedule:', error);
+        return res.status(500).send(error);
+    }
+});
+
+
 
 //meals
 app.post('/addMeal', async (req, res) => {

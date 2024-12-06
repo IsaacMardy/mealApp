@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { getSchedule } from '../Services/SelectedSchedule';
+import { addPersonalSchedule, getSchedule } from '../Services/SelectedSchedule';
 import { Link } from "react-router-dom";
-import {saveSchedule} from "../Services/UserServices"
+import { saveSchedule } from "../Services/UserServices"
 
 function DisplaySchedule() {
     const [schedule, setSchedule] = useState({});
@@ -12,8 +12,10 @@ function DisplaySchedule() {
     }, []); // Empty dependency array ensures this runs only once
 
     const savingSchedule = () => {
+        console.log(schedule)
         saveSchedule(schedule)
-    } 
+        addPersonalSchedule(schedule)
+    }
 
     return (
         <div>
@@ -23,19 +25,34 @@ function DisplaySchedule() {
                     <tr>
                         <th style={{ border: '1px solid black', padding: '8px' }}>Name</th>
                         <th style={{ border: '1px solid black', padding: '8px' }}>Description</th>
-                        <th style={{ border: '1px solid black', padding: '8px' }}>Edit</th>
                         <th style={{ border: '1px solid black', padding: '8px' }}>Delete</th>
                     </tr>
                 </thead>
+
+
                 <tbody>
-                    <tr>
-                        <td>Sunday Breakfast</td>
-                        {/* Check if Sunday exists and access index 0 safely */}
-                        <td>{schedule.Sunday?.[0]?.mealName || "No meal"}</td>
-                        <td><Link to="/DisplayMeals/Sunday0">Add Meal</Link></td>
-                        <td></td>
-                    </tr>
+                    {schedule.SundayBreakfast?.length > 0 ? (
+                        <>
+                            {schedule.SundayBreakfast.map((meal, index) => (
+                                <tr key={index}>
+                                    <td>{index === 0 ? "Sunday Breakfast" : ""}</td>
+                                    <td>{meal.mealName || "No meal"}</td>
+                                </tr>
+                            ))}
+                            <tr>
+                                <td></td>
+                                <td><Link to="/DisplayMeals/Sunday0">Add Meal</Link></td>
+                            </tr>
+                        </>
+                    ) : (
+                        <tr>
+                            <td>Sunday Breakfast</td>
+                            <td><Link to="/DisplayMeals/Sunday0">Add Meal</Link></td>
+                            <td></td>
+                        </tr>
+                    )}
                 </tbody>
+
             </table>
             <button onClick={savingSchedule}>Save</button>
         </div>

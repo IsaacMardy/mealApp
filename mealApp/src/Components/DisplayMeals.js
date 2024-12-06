@@ -38,7 +38,11 @@ function DisplayMeals() {
     }, []);
 
     const addMeal = (Time, sharedData) => {
-        addMealtoSchedule(Time, sharedData)
+        if(sharedData){
+            addMealtoSchedule(Time, sharedData)
+        }else{
+            console.log("nothing to add")
+        }
     }
 
     // fix box and list size
@@ -57,7 +61,7 @@ function DisplayMeals() {
                 />
             )}
             <ScrollingBox selectedItem={sharedData}></ScrollingBox>
-            <Link to="/DisplayScedule/" onClick={addMeal(Time,sharedData)}>Select</Link>
+            <Link to="/DisplayScedule/" onClick={() => addMeal(Time, sharedData)}>Select</Link>
         </div>
     );
 }
