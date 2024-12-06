@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { addPersonalSchedule, getSchedule } from '../Services/SelectedSchedule';
+import { addPersonalSchedule, getSchedule, publishSchedule } from '../Services/SelectedSchedule';
 import { Link } from "react-router-dom";
 import { saveSchedule } from "../Services/UserServices"
 
 function DisplaySchedule() {
     const [schedule, setSchedule] = useState({});
+    const [scheduleName, setScheduleName] = useState("");
 
     useEffect(() => {
         const fetchedSchedule = getSchedule(); // Retrieve schedule from singleton
@@ -12,13 +13,38 @@ function DisplaySchedule() {
     }, []); // Empty dependency array ensures this runs only once
 
     const savingSchedule = () => {
-        console.log(schedule)
-        saveSchedule(schedule)
-        addPersonalSchedule(schedule)
+        if(scheduleName){
+            const completeSchedule = {...schedule,scheduleName:scheduleName}
+            saveSchedule(completeSchedule)
+            addPersonalSchedule(completeSchedule)
+        }else{
+            alert("Please Put a name for the schedule to save")
+        }
+    }
+
+    const publishingSchedule = () => {
+        if(scheduleName){
+            const completeSchedule = {...schedule,scheduleName:scheduleName}
+            saveSchedule(completeSchedule)
+            publishSchedule(completeSchedule)
+        }else{
+            alert("Please Put a name for the schedule to publish")
+        }
     }
 
     return (
         <div>
+            <label className="form-control">Schedule Name:</label>
+            <input
+                type="text"
+                id="scheduleName"
+                name="scheduleName"
+                placeholder="Schedule Name"
+                className="form-control"
+                value={scheduleName}
+                onChange={(e) => setScheduleName(e.target.value)}
+            />
+
             <h1>Editable Table</h1>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
@@ -55,6 +81,7 @@ function DisplaySchedule() {
 
             </table>
             <button onClick={savingSchedule}>Save</button>
+            <button onClick={publishingSchedule}>Save and Publish</button>
         </div>
     );
 }

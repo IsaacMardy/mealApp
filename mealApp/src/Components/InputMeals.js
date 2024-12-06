@@ -4,6 +4,7 @@ import { addMeal } from '../Services/MealServices';
 function InputMeals() {
     const [mealName, setMealName] = useState("");
     const [ingredients, setIngredients] = useState([""]); // Start with one empty ingredient field
+    const [instruction, setInstruction] = useState("");
 
     const submitMeal = async (event) => {
         event.preventDefault(); // Prevent default form submission behavior
@@ -67,6 +68,17 @@ function InputMeals() {
                 <button type="button" className="btn btn-secondary" onClick={addIngredient}>
                     Add Ingredients
                 </button>
+
+                <label className="form-control">Instruction:</label>
+                <textarea
+                    type="text"
+                    id="Instruction"
+                    name="Instruction"
+                    placeholder="Instruction"
+                    className="form-control"
+                    value={instruction}
+                    onChange={(e) => setInstruction(e.target.value)}
+                />
                 <br />
                 <button type="submit" className="btn btn-primary">Submit Meal</button>
             </form>

@@ -65,3 +65,12 @@ export function addPersonalSchedule(schedule){
           .then()
           .catch((err) => alert('Error in adding personal schedule'))
   }
+
+export function publishSchedule(schedule){
+
+    const scheduleWithUserId = { ...schedule, userId: `${JSON.parse(localStorage.getItem('loggedInUser'))._id}` };
+
+    axios.post('http://localhost:5001/publishSchedule', scheduleWithUserId)
+          .then()
+          .catch((err) => alert('Error in publishing personal schedule'))
+  }

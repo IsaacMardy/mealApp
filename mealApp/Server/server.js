@@ -80,14 +80,86 @@ app.put('/updateSchedule', async (req, res) => {
     }
 })
 
+function getMealIDs(list){
+    const idArrays = [];
+    for(const item of list){
+        idArrays.push(new ObjectId(item._id));
+    }
+    return idArrays;
+}
+
+
 app.post('/addPersonalSchedule', async (req, res) => {
     try {
         const db = client.db('Mealdatabase');
         const collection = db.collection('PersonalSchedule');
 
-        // Extract userId and modify it
-        const modifiedUserId = new ObjectId(req.body.userId); // Example modification
-        const updatedBody = { ...req.body, userId: modifiedUserId };
+        const updatedBody = { 
+            scheduleName: req.body.scheduleName,
+            userId: new ObjectId(req.body.userId),
+            SundayBreakfast: getMealIDs(req.body.SundayBreakfast),
+            SundayLunch: getMealIDs(req.body.SundayLunch),
+            SundayDinner: getMealIDs(req.body.SundayDinner),
+            MondayBreakfast: getMealIDs(req.body.MondayBreakfast),
+            MondayLunch: getMealIDs(req.body.MondayLunch),
+            MondayDinner: getMealIDs(req.body.MondayDinner),
+            TuesdayBreakfast: getMealIDs(req.body.TuesdayBreakfast),
+            TuesdayLunch: getMealIDs(req.body.TuesdayLunch),
+            TuesdayDinner: getMealIDs(req.body.TuesdayDinner),
+            WednesdayBreakfast: getMealIDs(req.body.WednesdayBreakfast),
+            WednesdayLunch: getMealIDs(req.body.WednesdayLunch),
+            WednesdayDinner: getMealIDs(req.body.WednesdayDinner),
+            ThrusdayBreakfast: getMealIDs(req.body.ThursdayBreakfast),
+            ThrusdayLunch: getMealIDs(req.body.ThursdayLunch),
+            ThrusdayDinner: getMealIDs(req.body.ThursdayDinner),
+            FridayBreakfast: getMealIDs(req.body.FridayBreakfast),
+            FridayLunch: getMealIDs(req.body.FridayLunch),
+            FridayDinner: getMealIDs(req.body.FridayDinner),
+            SaturdayBreakfast: getMealIDs(req.body.SaturdayBreakfast),
+            SaturdayLunch: getMealIDs(req.body.SaturdayLunch),
+            SaturdayDinner: getMealIDs(req.body.SaturdayDinner)
+         };
+
+        // Insert the updated object into the database
+        const result = await collection.insertOne(updatedBody);
+
+        return res.status(200).json({ success: true, result: result });
+    } catch (error) {
+        console.error('Error in adding personal schedule:', error);
+        return res.status(500).send(error);
+    }
+});
+
+app.post('/publishSchedule', async (req, res) => {
+    try {
+        const db = client.db('Mealdatabase');
+        const collection = db.collection('Schedules');
+
+        const updatedBody = { 
+            scheduleName: req.body.scheduleName,
+            userId: new ObjectId(req.body.userId),
+            SundayBreakfast: getMealIDs(req.body.SundayBreakfast),
+            SundayLunch: getMealIDs(req.body.SundayLunch),
+            SundayDinner: getMealIDs(req.body.SundayDinner),
+            MondayBreakfast: getMealIDs(req.body.MondayBreakfast),
+            MondayLunch: getMealIDs(req.body.MondayLunch),
+            MondayDinner: getMealIDs(req.body.MondayDinner),
+            TuesdayBreakfast: getMealIDs(req.body.TuesdayBreakfast),
+            TuesdayLunch: getMealIDs(req.body.TuesdayLunch),
+            TuesdayDinner: getMealIDs(req.body.TuesdayDinner),
+            WednesdayBreakfast: getMealIDs(req.body.WednesdayBreakfast),
+            WednesdayLunch: getMealIDs(req.body.WednesdayLunch),
+            WednesdayDinner: getMealIDs(req.body.WednesdayDinner),
+            ThrusdayBreakfast: getMealIDs(req.body.ThursdayBreakfast),
+            ThrusdayLunch: getMealIDs(req.body.ThursdayLunch),
+            ThrusdayDinner: getMealIDs(req.body.ThursdayDinner),
+            FridayBreakfast: getMealIDs(req.body.FridayBreakfast),
+            FridayLunch: getMealIDs(req.body.FridayLunch),
+            FridayDinner: getMealIDs(req.body.FridayDinner),
+            SaturdayBreakfast: getMealIDs(req.body.SaturdayBreakfast),
+            SaturdayLunch: getMealIDs(req.body.SaturdayLunch),
+            SaturdayDinner: getMealIDs(req.body.SaturdayDinner)
+         };
 
         // Insert the updated object into the database
         const result = await collection.insertOne(updatedBody);
