@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { addPersonalSchedule, getSchedule, publishSchedule } from '../Services/SelectedSchedule';
+import { addPersonalSchedule, getSchedule, publishSchedule, setSchedule as setRealSchedule } from '../Services/SelectedSchedule';
 import { Link } from "react-router-dom";
 import { saveSchedule } from "../Services/UserServices"
 
@@ -32,6 +32,13 @@ function DisplaySchedule() {
         }
     }
 
+    const deleteItem = (mealType, index) => {
+        const updatedSchedule = { ...schedule }; // Create a shallow copy of the schedule
+        updatedSchedule[mealType].splice(index, 1); // Remove the item at the given index
+        setSchedule(updatedSchedule); // Update the state
+        setRealSchedule(updatedSchedule)
+    };
+
     return (
         <div>
             <label className="form-control">Schedule Name:</label>
@@ -63,6 +70,9 @@ function DisplaySchedule() {
                                 <tr key={index}>
                                     <td>{index === 0 ? "Sunday Breakfast" : ""}</td>
                                     <td>{meal.mealName || "No meal"}</td>
+                                    <td><button onClick={() => deleteItem("SundayBreakfast", index)}>
+                                            Delete
+                                        </button></td>
                                 </tr>
                             ))}
                             <tr>

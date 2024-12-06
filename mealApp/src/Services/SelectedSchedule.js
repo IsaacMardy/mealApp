@@ -61,7 +61,7 @@ export function addPersonalSchedule(schedule){
 
     const scheduleWithUserId = { ...schedule, userId: `${JSON.parse(localStorage.getItem('loggedInUser'))._id}` };
 
-    axios.post('http://localhost:5001/addPersonalSchedule', scheduleWithUserId)
+    axios.put('http://localhost:5001/addPersonalSchedule', scheduleWithUserId)
           .then()
           .catch((err) => alert('Error in adding personal schedule'))
   }
