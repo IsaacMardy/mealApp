@@ -3,7 +3,7 @@ import React from 'react';
 function ScrollingBox({ selectedItem }) {
 
     return (
-        <div style={{ width: '300px', height: '200px', overflow: 'auto', border: '1px solid #ccc' }}>
+        <div style={{ float:"left", width: '40%', height: '100%', overflow: 'auto', border: '1px solid #ccc' }}>
             <div style={{ padding: '20px' }}>
                 {selectedItem ? (
                     <>

@@ -39,7 +39,10 @@ function NavBar() {
               <Link to="/DisplayMeals">See Selection</Link>
             </li>
             <li>
-              <Link to="/DisplayScedule">See Schedule</Link>
+              <Link to="/SelectSchedule">Select Schedule</Link>
+            </li>
+            <li>
+              <Link to="/DisplayIngredients">See Ingredients</Link>
             </li>
             <li>
               <Link onClick={logOut}>Log Out</Link>

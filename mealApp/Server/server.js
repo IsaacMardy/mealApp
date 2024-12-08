@@ -4,9 +4,6 @@ import jwt from 'jsonwebtoken';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 
-import Meal from './Schema/Meal.js';
-
-
 const app = express();
 const port = 5001;
 
@@ -20,9 +17,9 @@ const JWT_SECRET = 'your-jwt-secret';
 
 client.connect().then(() => {
     console.log('Connected to MongoDB');
-    }).catch(err => {
-        console.error('Failed to connect to MongoDB', err);
-    });
+}).catch(err => {
+    console.error('Failed to connect to MongoDB', err);
+});
 
 app.get('/loginCheck', async (req, res) => {
     const user = req.query;
@@ -30,12 +27,13 @@ app.get('/loginCheck', async (req, res) => {
         const db = client.db('Mealdatabase');
         const collection = db.collection('Users')
         const existingUser = await collection.findOne({ userID: user.userID, password: user.password });
-        if(existingUser){
-            return  res.status(200).json({ success: true, user: existingUser, message: 'Login Successful' });
-        }else{
+        if (existingUser) {
+            return res.status(200).json({ success: true, user: existingUser, message: 'Login Successful' });
+        } else {
             return res.status(400).json({ message: 'UserID or Password is wrong' });
         }
-    }catch(err){}}
+    } catch (err) { }
+}
 );
 
 app.post('/signup', async (req, res) => {
@@ -45,72 +43,182 @@ app.post('/signup', async (req, res) => {
         const existingUser = await collection.findOne({ userID: req.body.userID });
         if (existingUser) {
             return res.status(400).json({ message: 'Username already exists' });
-        }else{
-            await collection.insertOne(req.body)}
-    }catch(err){
+        } else {
+            await collection.insertOne(req.body)
+        }
+    } catch (err) {
         return res.status(500).json({ message: 'Internal server error' });
-    }}
+    }
+}
 );
 
-app.get('/getAllUsers', async (req,res)=>{
-    try{
+app.get('/getAllUsers', async (req, res) => {
+    try {
         const db = client.db('Mealdatabase');
         const collection = db.collection('Users')
-        const allExistingUsers = await collection.find({ firstName: { $exists: true }, lastName: { $exists: true } }, {firstName:1, lastName:1}).toArray();
-        return  res.status(200).json({ success: true, users: allExistingUsers})
-    }catch(error){
+        const allExistingUsers = await collection.find({ firstName: { $exists: true }, lastName: { $exists: true } }, { firstName: 1, lastName: 1 }).toArray();
+        return res.status(200).json({ success: true, users: allExistingUsers })
+    } catch (error) {
         res.status(500).send(error)
     }
 })
+
+app.put('/updateSchedule', async (req, res) => {
+    try {
+        const db = client.db('Mealdatabase');
+        const collection = db.collection('Users')
+        const { _id, schedule } = req.body
+        schedule._id = new ObjectId(schedule._id); // Convert string _id to ObjectId
+        const result = await collection.updateOne(
+            { _id: new ObjectId(_id) },
+            { $set: { schedule: schedule } }
+        );
+        return res.status(200).json({ success: true, result: result })
+    }
+    catch (error) {
+        res.status(500).send(error)
+    }
+})
+
+function getMealIDs(list) {
+    const idArrays = [];
+    for (const item of list) {
+        idArrays.push(new ObjectId(item._id));
+    }
+    return idArrays;
+}
+
+
+app.put('/addPersonalSchedule', async (req, res) => {
+    try {
+        const db = client.db('Mealdatabase');
+        const collection = db.collection('PersonalSchedule');
+
+        // Transform the schedule
+        const updatedBody = {
+            scheduleName: req.body.scheduleName,
+            userId: new ObjectId(req.body.userId), // Ensure userId is an ObjectId
+            SundayBreakfast: getMealIDs(req.body.SundayBreakfast),
+            SundayLunch: getMealIDs(req.body.SundayLunch),
+            SundayDinner: getMealIDs(req.body.SundayDinner),
+            MondayBreakfast: getMealIDs(req.body.MondayBreakfast),
+            MondayLunch: getMealIDs(req.body.MondayLunch),
+            MondayDinner: getMealIDs(req.body.MondayDinner),
+            TuesdayBreakfast: getMealIDs(req.body.TuesdayBreakfast),
+            TuesdayLunch: getMealIDs(req.body.TuesdayLunch),
+            TuesdayDinner: getMealIDs(req.body.TuesdayDinner),
+            WednesdayBreakfast: getMealIDs(req.body.WednesdayBreakfast),
+            WednesdayLunch: getMealIDs(req.body.WednesdayLunch),
+            WednesdayDinner: getMealIDs(req.body.WednesdayDinner),
+            ThursdayBreakfast: getMealIDs(req.body.ThursdayBreakfast),
+            ThursdayLunch: getMealIDs(req.body.ThursdayLunch),
+            ThursdayDinner: getMealIDs(req.body.ThursdayDinner),
+            FridayBreakfast: getMealIDs(req.body.FridayBreakfast),
+            FridayLunch: getMealIDs(req.body.FridayLunch),
+            FridayDinner: getMealIDs(req.body.FridayDinner),
+            SaturdayBreakfast: getMealIDs(req.body.SaturdayBreakfast),
+            SaturdayLunch: getMealIDs(req.body.SaturdayLunch),
+            SaturdayDinner: getMealIDs(req.body.SaturdayDinner)
+        };
+
+        // Use upsert to update or insert
+        const result = await collection.updateOne(
+            { userId: updatedBody.userId },
+            { $set: updatedBody },
+            { upsert: true }
+        );
+
+        return res.status(200).json({ success: true, result: result });
+    } catch (error) {
+        console.error('Error in adding personal schedule:', error);
+        return res.status(500).send(error);
+    }
+});
+
+
+app.post('/publishSchedule', async (req, res) => {
+    try {
+        const db = client.db('Mealdatabase');
+        const collection = db.collection('Schedules');
+
+        const updatedBody = {
+            scheduleName: req.body.scheduleName,
+            userId: new ObjectId(req.body.userId),
+            SundayBreakfast: getMealIDs(req.body.SundayBreakfast),
+            SundayLunch: getMealIDs(req.body.SundayLunch),
+            SundayDinner: getMealIDs(req.body.SundayDinner),
+            MondayBreakfast: getMealIDs(req.body.MondayBreakfast),
+            MondayLunch: getMealIDs(req.body.MondayLunch),
+            MondayDinner: getMealIDs(req.body.MondayDinner),
+            TuesdayBreakfast: getMealIDs(req.body.TuesdayBreakfast),
+            TuesdayLunch: getMealIDs(req.body.TuesdayLunch),
+            TuesdayDinner: getMealIDs(req.body.TuesdayDinner),
+            WednesdayBreakfast: getMealIDs(req.body.WednesdayBreakfast),
+            WednesdayLunch: getMealIDs(req.body.WednesdayLunch),
+            WednesdayDinner: getMealIDs(req.body.WednesdayDinner),
+            ThursdayBreakfast: getMealIDs(req.body.ThursdayBreakfast),
+            ThursdayLunch: getMealIDs(req.body.ThursdayLunch),
+            ThursdayDinner: getMealIDs(req.body.ThursdayDinner),
+            FridayBreakfast: getMealIDs(req.body.FridayBreakfast),
+            FridayLunch: getMealIDs(req.body.FridayLunch),
+            FridayDinner: getMealIDs(req.body.FridayDinner),
+            SaturdayBreakfast: getMealIDs(req.body.SaturdayBreakfast),
+            SaturdayLunch: getMealIDs(req.body.SaturdayLunch),
+            SaturdayDinner: getMealIDs(req.body.SaturdayDinner)
+        };
+
+        // Insert the updated object into the database
+        const result = await collection.insertOne(updatedBody);
+
+        return res.status(200).json({ success: true, result: result });
+    } catch (error) {
+        console.error('Error in adding personal schedule:', error);
+        return res.status(500).send(error);
+    }
+});
+
 
 
 //meals
 app.post('/addMeal', async (req, res) => {
-    const { mealName, ingredients, day, mealType, userId } = req.body;
-
-    if (!mealName || !ingredients || !day || !mealType || !userId) {
-        return res.status(400).json({ error: 'All fields are required.' });
-    }
     try {
         const db = client.db('Mealdatabase');
-        const collection = db.collection('Meals');
-        await collection.insertOne(req.body);
-        res.status(200).json({ message: 'Meal added successfully' });
-    } catch (error) {
-        console.error('Error adding meal:', error);
-        res.status(500).json({ error: 'Failed to add meal.' });
+        const collection = db.collection('Meals')
+        const meal = await collection.findOne({ mealName: req.body.mealName });
+        if (meal) {
+            return res.status(400).json({ message: 'Meal name already exists' });
+        } else {
+            await collection.insertOne(req.body)
+        }
+    } catch (err) {
+        return res.status(500).json({ message: 'Internal server error' });
     }
-});
+}
+);
 
-
-
-app.get('/getAllMeals', async (req,res)=>{
-    try{
+app.get('/getAllMeals', async (req, res) => {
+    try {
         const db = client.db('Mealdatabase');
         const collection = db.collection('Meals')
         const meals = await collection.find({ mealName: { $exists: true } }).toArray();
-        return  res.status(200).json({ success: true, meals: meals})
-    }catch(error){
+        return res.status(200).json({ success: true, meals: meals })
+    } catch (error) {
         res.status(500).send(error)
     }
 })
 
-app.get('/getUserMeals', async (req, res) => {
-    const userId = req.query.userId;
-    if (!ObjectId.isValid(userId)) {
-        return res.status(400).json({ error: 'Invalid userId format' });
-    }
 
-    try {
-        const db = client.db('Mealdatabase');
-        const collection = db.collection('Meals');
-        const meals = await collection.find({ userId: new ObjectId(userId) }).toArray();
-        res.status(200).json(meals);
-    } catch (error) {
-        console.error('Error fetching usermeals:', error);
-        res.status(500).json({ error: 'Failed to fetch usermeals' });
-    }
-});
+
+
+
+
+
+
+
+
+
+
+
 
 
 //new project route
@@ -121,29 +229,29 @@ app.post('/createTeam', async (req, res) => {
         const exist = await collection.findOne({ teamName: req.body.teamName });
         if (exist) {
             return res.status(400).json({ message: 'Team name already exists' });
-        }else{
+        } else {
             await collection.insertOne(req.body)
         }
         return res.status(200)
     }
-    catch (error){
+    catch (error) {
         res.status(500).send(error)
     }
 })
 
-app.get('/getAllTeamNames', async (req,res)=>{
-    try{
+app.get('/getAllTeamNames', async (req, res) => {
+    try {
         const db = client.db('Mealdatabase');
         const collection = db.collection('Team')
         const allTeams = await collection.find({ teamName: { $exists: true } }).toArray();
-        return  res.status(200).json({ success: true, teams: allTeams})
-    }catch(error){
+        return res.status(200).json({ success: true, teams: allTeams })
+    } catch (error) {
         res.status(500).send(error)
     }
 })
 
-app.get('/getTeamDetail', async(req,res)=>{
-    try{
+app.get('/getTeamDetail', async (req, res) => {
+    try {
 
         if (!ObjectId.isValid(req.query._id)) {
             return res.status(400).json({ success: false, message: 'Invalid team ID format' });
@@ -152,8 +260,8 @@ app.get('/getTeamDetail', async(req,res)=>{
         const db = client.db('Mealdatabase');
         const collection = db.collection('Team')
         const teamDetail = await collection.findOne({ _id: new ObjectId(req.query._id) });
-        return  res.status(200).json({ success: true, team: teamDetail, message: 'Team Details Found' });
-    }catch(error){
+        return res.status(200).json({ success: true, team: teamDetail, message: 'Team Details Found' });
+    } catch (error) {
         res.status(500).send(error)
     }
 })
@@ -165,11 +273,11 @@ app.put('/updateTeamDetail', async (req, res) => {
         const { _id, teamName, teamMembers } = req.body;
         const result = await collection.updateOne(
             { _id: new ObjectId(_id) },
-            { $set: { teamName, teamMembers } } 
-          );
+            { $set: { teamName, teamMembers } }
+        );
         return res.status(200)
     }
-    catch (error){
+    catch (error) {
         res.status(500).send(error)
     }
 })
@@ -182,23 +290,23 @@ app.post('/createProject', async (req, res) => {
         const exist = await collection.findOne({ projectName: req.body.projectName });
         if (exist) {
             return res.status(400).json({ message: 'Project name already exists' });
-        }else{
+        } else {
             await collection.insertOne(req.body)
         }
         return res.status(200)
     }
-    catch (error){
+    catch (error) {
         res.status(500).send(error)
     }
 })
 
-app.get('/getAllProjects', async (req,res)=>{
-    try{
+app.get('/getAllProjects', async (req, res) => {
+    try {
         const db = client.db('Mealdatabase');
         const collection = db.collection('Project')
         const allProjects = await collection.find({ projectName: { $exists: true } }).toArray();
-        return  res.status(200).json({ success: true, projects: allProjects})
-    }catch(error){
+        return res.status(200).json({ success: true, projects: allProjects })
+    } catch (error) {
         res.status(500).send(error)
     }
 })
@@ -207,20 +315,20 @@ app.put('/updateProject', async (req, res) => {
     try {
         const db = client.db('Mealdatabase');
         const collection = db.collection('Project')
-        const {_id,projectName,projectDescription,projectOwner,Manager,Team} = req.body
+        const { _id, projectName, projectDescription, projectOwner, Manager, Team } = req.body
         const result = await collection.updateOne(
-            { _id: new ObjectId(_id)},
-            { $set: { projectName,projectDescription,projectOwner,Manager,Team } }
-          );
+            { _id: new ObjectId(_id) },
+            { $set: { projectName, projectDescription, projectOwner, Manager, Team } }
+        );
         return res.status(200)
     }
-    catch (error){
+    catch (error) {
         res.status(500).send(error)
     }
 })
 
-app.get('/getProjectDetail', async(req,res)=>{
-    try{
+app.get('/getProjectDetail', async (req, res) => {
+    try {
 
         if (!ObjectId.isValid(req.query._id)) {
             return res.status(400).json({ success: false, message: 'Invalid team ID format' });
@@ -229,8 +337,8 @@ app.get('/getProjectDetail', async(req,res)=>{
         const db = client.db('Mealdatabase');
         const collection = db.collection('Project')
         const teamDetail = await collection.findOne({ _id: new ObjectId(req.query._id) });
-        return  res.status(200).json({ success: true, project: teamDetail, message: 'Team Details Found' });
-    }catch(error){
+        return res.status(200).json({ success: true, project: teamDetail, message: 'Team Details Found' });
+    } catch (error) {
         res.status(500).send(error)
     }
 })
@@ -240,7 +348,7 @@ app.post('/createUserStory', async (req, res) => {
         const db = client.db('Mealdatabase');
         const collection = db.collection('UserStory')
 
-        const { user_Story,proj_id,priority } = req.body;
+        const { user_Story, proj_id, priority } = req.body;
 
         const newUserStory = {
             user_Story,
@@ -248,22 +356,22 @@ app.post('/createUserStory', async (req, res) => {
             priority
         }
 
-        
+
         await collection.insertOne(newUserStory)
         return res.status(200)
     }
-    catch (error){
+    catch (error) {
         res.status(500).send(error)
     }
 })
 
-app.get('/getAllProjectUserStories', async (req,res)=>{
-    try{
+app.get('/getAllProjectUserStories', async (req, res) => {
+    try {
         const db = client.db('Mealdatabase');
         const collection = db.collection('UserStory')
         const allUserStories = await collection.find({ proj_id: new ObjectId(req.query._id) }).toArray();
-        return  res.status(200).json({ success: true, stories: allUserStories})
-    }catch(error){
+        return res.status(200).json({ success: true, stories: allUserStories })
+    } catch (error) {
         res.status(500).send(error)
     }
 })
@@ -272,14 +380,14 @@ app.put('/updateUserStory', async (req, res) => {
     try {
         const db = client.db('Mealdatabase');
         const collection = db.collection('UserStory')
-        const {_id,user_Story,proj_id,priority,Assignee} = req.body
+        const { _id, user_Story, proj_id, priority, Assignee } = req.body
         const result = await collection.updateOne(
-            { _id: new ObjectId(_id)},
-            { $set: { user_Story,proj_id: new ObjectId(proj_id),priority,Assignee: new ObjectId(Assignee)} }
-          );
+            { _id: new ObjectId(_id) },
+            { $set: { user_Story, proj_id: new ObjectId(proj_id), priority, Assignee: new ObjectId(Assignee) } }
+        );
         return res.status(200)
     }
-    catch (error){
+    catch (error) {
         res.status(500).send(error)
     }
 })
@@ -288,7 +396,7 @@ app.delete('/deleteUserStory', async (req, res) => {
     try {
         const db = client.db('Mealdatabase');
         const collection = db.collection('UserStory');
-        
+
         const result = await collection.deleteOne({ _id: new ObjectId(req.body._id) });
 
         if (result.deletedCount === 1) {
@@ -301,6 +409,30 @@ app.delete('/deleteUserStory', async (req, res) => {
     }
 });
 
+//added by Isaac
+// Filter meals by ingredients
+app.get('/filterMeals', async (req, res) => {
+    try {
+        const db = client.db('Mealdatabase');
+        const collection = db.collection('Meals');
+
+        // Extract the ingredients from the query parameter
+        const { ingredients } = req.query;
+        const ingredientArray = ingredients.split(',').map(ing => ing.trim());
+
+        const filteredMeals = await collection.find({
+            ingredients: { $all: ingredientArray }
+        }).toArray();
+
+        return res.status(200).json({ success: true, meals: filteredMeals });
+    } catch (error) {
+        console.error('Error filtering meals:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
-    });
+});
+

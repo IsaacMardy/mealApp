@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import {register} from "../Services/UserServices";
-import "./Register.css";
 // import axios from "axios";
 
 //registering function
@@ -12,7 +11,6 @@ function Register() {
     const [userID, setUserID] = useState("");
     const [password, setPassword] = useState("");
 
-    //need signup message
       const handleSignUp = (event) => {
         event.preventDefault()
         const newUser = {
@@ -22,66 +20,35 @@ function Register() {
           password:password
         }
         register(newUser);
-        window.location.reload();
-      };
+      }
 
       //add diatitian check box
-      return (
-        <div className="register-container">
-          <form className="form-group" onSubmit={handleSignUp}>
-            <div className="form-group">
-              <label htmlFor="firstName">First Name:</label>
-              <input
-                type="text"
-                id="firstName"
-                className="form-control"
-                placeholder="First Name"
-                onChange={(e) => setFirstName(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="lastName">Last Name:</label>
-              <input
-                type="text"
-                id="lastName"
-                className="form-control"
-                placeholder="Last Name"
-                onChange={(e) => setLastName(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="userID">Username:</label>
-              <input
-                type="text"
-                id="userID"
-                className="form-control"
-                placeholder="Username"
-                onChange={(e) => setUserID(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="password">Password:</label>
-              <input
-                type="password"
-                id="password"
-                className="form-control"
-                placeholder="Password"
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <button type="submit" className="btn btn-primary">
-              Signup
+    return (
+      <div>
+        <form class="form-group" onSubmit={handleSignUp}>
+          <label for="firstName" class="form-group">First Name:</label>
+          <input type="text" id="firstName" name="firstName" class="form-control" placeholder="First Name" onChange={(e)=>setFirstName(e.target.value)}></input>
+          <label for="LastName">Last Name:</label>
+          <input type="text" id="LastName" name="LastName" class="form-control" placeholder="Last Name" onChange={(e)=>setLastName(e.target.value)}></input>
+          <label for="UserID">Username:</label>
+          <input type="text" id="UserID" name="UserID" class="form-control" placeholder="Username" onChange={(e)=>setUserID(e.target.value)}></input>
+          <label for="username">Password:</label>
+          <input type="text" id="password" name="password" class="form-control" placeholder="Password" onChange={(e)=>setPassword  (e.target.value)}></input>
+         
+         
+          <button 
+                type="button" 
+                onClick={(event) => handleSignUp(event,firstName, lastName, userID, password)}>
+                Signup
             </button>
-          </form>
-    
-          <p className="login-redirect">
-            Already have an account?{" "}
-            <Link to="/Login" className="login-link">
-              Login
-            </Link>
-          </p>
-        </div>
-      );
-    }
-    
-    export default Register;
+
+
+          
+        </form>
+
+          <p> Already have an account? <Link to="/Login">Login</Link></p>
+      </div>
+    );
+  }
+  
+  export default Register;

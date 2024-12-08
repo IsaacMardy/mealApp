@@ -22,6 +22,21 @@ export function register(newUser){
         .catch((err) => alert('Error in Signing Up'))
 }
 
+export function saveSchedule(schedule){
+
+  console.log(schedule)
+
+  const user = {
+    _id:`${JSON.parse(localStorage.getItem('loggedInUser'))._id}`,
+    schedule:schedule
+  }
+
+  axios.put('http://localhost:5001/updateSchedule', user)
+        .then()
+        .catch((err) => alert('Error in saving schedule'))
+  
+}
+
 export function signOut(){
   localStorage.clear();
   window.location.replace("/Login")
