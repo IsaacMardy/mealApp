@@ -50,6 +50,27 @@ function DisplayMeals() {
         }
     }
 
+    // Function to filter meals by ingredients
+    const filterMeals = () => {
+        if (filter.trim() === '') {
+            setFilteredMeals(meals);
+            return;
+        }
+        const filtered = meals.filter(meal =>
+            meal.ingredients &&
+            meal.ingredients.some(ingredient =>
+                ingredient.toLowerCase().includes(filter.toLowerCase())
+            )
+        );
+        setFilteredMeals(filtered);
+    };
+
+      // Function to reset the filter
+    const resetFilter = () => {
+        setFilteredMeals(meals);
+        setFilter('');
+    };
+
     // fix box and list size
    
     return (
