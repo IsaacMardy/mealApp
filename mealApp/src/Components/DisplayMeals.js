@@ -99,7 +99,7 @@ function DisplayMeals() {
                     </div>
                     <ScrollingList
                         items={filteredMeals} // Display filtered meals
-                        selectedItem={sharedData}
+                        selectedItem={sharedData} 
                         updateSelectedItem={updateSharedData}
                     />
                 </>
