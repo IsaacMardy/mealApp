@@ -61,7 +61,11 @@ function DisplayMeals() {
                 />
             )}
             <ScrollingBox selectedItem={sharedData}></ScrollingBox>
-            <Link to="/DisplayScedule/" onClick={() => addMeal(Time, sharedData)}>Select</Link>
+            {Time ? (
+                <Link to="/DisplayScedule/" onClick={() => addMeal(Time, sharedData)}>Select</Link>
+            ):(
+                <div></div>
+            )}
         </div>
     );
 }
