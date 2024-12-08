@@ -409,6 +409,30 @@ app.delete('/deleteUserStory', async (req, res) => {
     }
 });
 
+//added by Isaac
+// Filter meals by ingredients
+app.get('/filterMeals', async (req, res) => {
+    try {
+        const db = client.db('Mealdatabase');
+        const collection = db.collection('Meals');
+
+        // Extract the ingredients from the query parameter
+        const { ingredients } = req.query;
+        const ingredientArray = ingredients.split(',').map(ing => ing.trim());
+
+        const filteredMeals = await collection.find({
+            ingredients: { $all: ingredientArray }
+        }).toArray();
+
+        return res.status(200).json({ success: true, meals: filteredMeals });
+    } catch (error) {
+        console.error('Error filtering meals:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
+

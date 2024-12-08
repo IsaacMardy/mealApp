@@ -12,20 +12,25 @@ function DisplayMeals() {
     const [sharedData, setSharedData] = useState(''); // State for selected meal
     const [loading, setLoading] = useState(true); // State to handle loading
     const [error, setError] = useState(null); // State to handle errors
+    const [filter, setFilter] = useState(''); // State for the ingredient filter
+    const [filteredMeals, setFilteredMeals] = useState([]); // State for filtered meals
 
-    // Function to update shared data (triggered by ScrollingList)
+
+    // Function to update shared data
     const updateSharedData = (newData) => {
         setSharedData(newData);
     };
 
-    // Fetch all meals on component mount
+
+    // Fetch all meals
     useEffect(() => {
         const fetchMeals = async () => {
             setLoading(true);
             setError(null);
             try {
-                const fetchedMeals = await getAllMeals(); // Wait for the meals to be fetched
+                const fetchedMeals = await getAllMeals();
                 setMeals(fetchedMeals);
+                setFilteredMeals(fetchedMeals);
             } catch (error) {
                 console.error('Error fetching meals:', error);
                 setError('Failed to load meals.');
@@ -46,6 +51,7 @@ function DisplayMeals() {
     }
 
     // fix box and list size
+   
     return (
         <div>
             <h1>Meal Display</h1>
@@ -54,11 +60,23 @@ function DisplayMeals() {
             ) : error ? (
                 <p style={{ color: 'red' }}>{error}</p>
             ) : (
-                <ScrollingList 
-                    items={meals} 
-                    selectedItem={sharedData} 
-                    updateSelectedItem={updateSharedData} 
-                />
+                <>
+                    <div>
+                        <input
+                            type="text"
+                            placeholder="Filter by ingredient"
+                            value={filter}
+                            onChange={(e) => setFilter(e.target.value)}
+                        />
+                        <button onClick={filterMeals}>Filter</button>
+                        <button onClick={resetFilter}>Reset Filter</button>
+                    </div>
+                    <ScrollingList
+                        items={filteredMeals} // Display filtered meals
+                        selectedItem={sharedData} 
+                        updateSelectedItem={updateSharedData}
+                    />
+                </>
             )}
             <ScrollingBox selectedItem={sharedData}></ScrollingBox>
             {Time ? (
