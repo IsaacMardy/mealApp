@@ -5,6 +5,7 @@ const UserSchema = new mongoose.Schema({
     lastName: String,
     userID: String,
     password: String
+    role: { type: String, enum: ["User", "Dietician"], default: "User" } // Added role field
 });
 
 const User = mongoose.model("User", UserSchema);

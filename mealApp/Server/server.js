@@ -436,3 +436,82 @@ app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
 
+//Dietician routing
+
+// Add a new dietician
+app.post('/addDietician', async (req, res) => {
+    try {
+        const db = client.db('Mealdatabase');
+        const collection = db.collection('Dieticians');
+        const existingDietician = await collection.findOne({ email: req.body.email });
+        if (existingDietician) {
+            return res.status(400).json({ message: 'Dietician already exists' });
+        } else {
+            await collection.insertOne(req.body);
+            return res.status(201).json({ success: true, message: 'Dietician added successfully' });
+        }
+    } catch (err) {
+        console.error('Error adding dietician:', err);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Delete a dietician
+app.delete('/deleteDietician', async (req, res) => {
+    try {
+        const { _id } = req.body;
+
+        if (!_id || !ObjectId.isValid(_id)) {
+            return res.status(400).json({ message: 'Invalid dietician ID' });
+        }
+
+        const db = client.db('Mealdatabase');
+        const collection = db.collection('Dieticians');
+        const result = await collection.deleteOne({ _id: new ObjectId(_id) });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ message: 'Dietician not found' });
+        }
+
+        return res.status(200).json({ success: true, message: 'Dietician deleted successfully' });
+    } catch (err) {
+        console.error('Error deleting dietician:', err);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Get all dieticians
+app.get('/getAllDieticians', async (req, res) => {
+    try {
+        const db = client.db('Mealdatabase');
+        const collection = db.collection('Dieticians');
+        const dieticians = await collection.find({}).toArray();
+        return res.status(200).json({ success: true, dieticians });
+    } catch (err) {
+        console.error('Error retrieving dieticians:', err);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Get dietician details by ID
+app.get('/getDieticianDetail', async (req, res) => {
+    try {
+        const { id } = req.query;
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({ message: 'Invalid dietician ID format' });
+        }
+
+        const db = client.db('Mealdatabase');
+        const collection = db.collection('Dieticians');
+        const dietician = await collection.findOne({ _id: new ObjectId(id) });
+
+        if (!dietician) {
+            return res.status(404).json({ message: 'Dietician not found' });
+        }
+
+        return res.status(200).json({ success: true, dietician });
+    } catch (err) {
+        console.error('Error retrieving dietician detail:', err);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});

@@ -7,10 +7,13 @@ function Login() {
 
   const [userID, setUserID] = useState("");
   const [password, setPassword] = useState("");
+  const [isDietician, setIsDietician] = useState(false);
+
 
   const handleLogin = (event) => {
     event.preventDefault()
-    checkLogin(userID,password);
+    const loginData = { userID, password, dietician: isDietician };
+    checkLogin(loginData);
   }
 
   // deleted this: <button class="btn" type="submit">Submit</button>
@@ -22,6 +25,17 @@ function Login() {
             <label for="Password">Password:</label>
             <input type="text" id="password" name="password" placeholder="Password" class="form-control" value={password} onChange={(e)=>setPassword(e.target.value)}></input>
 
+            {/* Dietician Login Toggle */}
+                  <div>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={isDietician}
+                        onChange={(e) => setIsDietician(e.target.checked)}
+                      />
+                      Login as Dietician
+                    </label>
+                  </div>
 
             <button type = "button" 
             onClick={(event) => {  handleLogin(event, userID, password)}}>
