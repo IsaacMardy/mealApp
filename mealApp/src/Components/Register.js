@@ -10,19 +10,17 @@ function Register() {
     const [lastName, setLastName] = useState("");
     const [userID, setUserID] = useState("");
     const [password, setPassword] = useState("");
+    const [isDietician, setIsDietician] = useState(false);
+    const [dieticianID, setDieticianID] = useState("");
 
       const handleSignUp = (event) => {
         event.preventDefault()
-        const newUser = {
-          firstName:firstName,
-          lastName:lastName,
-          userID:userID,
-          password:password
-        }
+        const newUser = isDietician
+      ? { firstName, lastName, userID, password, dieticianID }
+      : { firstName, lastName, userID, password };
         register(newUser);
       }
 
-      //add diatitian check box
     return (
       <div>
         <form class="form-group" onSubmit={handleSignUp}>
@@ -34,6 +32,33 @@ function Register() {
           <input type="text" id="UserID" name="UserID" class="form-control" placeholder="Username" onChange={(e)=>setUserID(e.target.value)}></input>
           <label for="username">Password:</label>
           <input type="text" id="password" name="password" class="form-control" placeholder="Password" onChange={(e)=>setPassword  (e.target.value)}></input>
+
+    {/* Dietician Checkbox */}
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              checked={isDietician}
+              onChange={(e) => setIsDietician(e.target.checked)}
+            />
+            Register as a Dietician
+          </label>
+        </div>
+
+        {/* Dietician ID Field */}
+        {isDietician && (
+          <div>
+            <label htmlFor="dieticianID">Dietician ID:</label>
+            <input
+              type="text"
+              id="dieticianID"
+              name="dieticianID"
+              className="form-control"
+              placeholder="Dietician ID"
+              onChange={(e) => setDieticianID(e.target.value)}
+            ></input>
+          </div>
+        )}
          
          
           <button 
