@@ -9,7 +9,7 @@
     "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
-    "bootstrap": "^5.3.2",
+    "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -51,5 +51,9 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
-  }
+  },
+  "description": "To start the program please cd into the project.\r Run: npm install\r Run: npm start",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC"
 }

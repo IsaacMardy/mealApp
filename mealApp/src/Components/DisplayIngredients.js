@@ -6,49 +6,37 @@ function DisplayIngredients() {
 
     useEffect(() => {
         const fetchedSchedule = getSchedule(); // Retrieve schedule from singleton
-        const temp = {
-            Sunday:fetchedSchedule.Sunday,
-            Monday:fetchedSchedule.Monday,
-            Tuesday:fetchedSchedule.Tuesday,
-            Wednesday:fetchedSchedule.Wednesday,
-            Thursday:fetchedSchedule.Thursday,
-            Friday:fetchedSchedule.Friday,
-            Saturday:fetchedSchedule.Saturday
-        }
-        setSchedule(temp); // Set the state with the fetched schedule
+        setSchedule(fetchedSchedule); // Set the state with the fetched schedule
         console.log(fetchedSchedule); // Optional: to see the schedule in the console
     }, []); // Empty dependency array ensures this runs only once
 
     return (
         <div>
             <h1>Ingredients for the Week</h1>
-            {Object.keys(schedule).map((day) => (
-                <div key={day}>
-                    <h2>{day}</h2>
+            {Object.keys(schedule).map((mealType) => (
+                <div key={mealType}>
+                    <h2>{mealType}</h2>
                     <ul>
-                        {Array.isArray(schedule[day]) && schedule[day].length > 0 ? (
-                            schedule[day].map((meal, index) => {
-                                // Destructure meal to omit the 'id' field
-                                const { id, ingredients, mealName } = meal; // Extract 'id', 'mealName', and 'ingredients'
-
-                                // Check if ingredients are present
-                                if (Array.isArray(ingredients) && ingredients.length > 0) {
-                                    return (
-                                        <div key={index}>
-                                            <h3>{mealName || `Meal ${index + 1}`}</h3> {/* Use mealName if available */}
-                                            <ul>
-                                                {ingredients.map((ingredient, i) => (
-                                                    <li key={i}>{ingredient}</li> // List each ingredient individually
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    );
-                                } else {
-                                    return <li key={index}>No ingredients available for this meal.</li>;
-                                }
+                        {Array.isArray(schedule[mealType]) && schedule[mealType].length > 0 ? (
+                            schedule[mealType].map((meal, index) => {
+                                const { mealName, ingredients } = meal; // Extract 'mealName' and 'ingredients'
+                                return (
+                                    <li key={meal._id || index}>
+                                        <h3>{mealName || `Meal ${index + 1}`}</h3> {/* Use mealName if available */}
+                                        <ul>
+                                            {Array.isArray(ingredients) && ingredients.length > 0 ? (
+                                                ingredients.map((ingredient, i) => (
+                                                    <li key={i}>{ingredient}</li>
+                                                ))
+                                            ) : (
+                                                <li>No ingredients available for this meal.</li>
+                                            )}
+                                        </ul>
+                                    </li>
+                                );
                             })
                         ) : (
-                            <li>No meals scheduled for {day}.</li> // If no meals for the day
+                            <li>No meals scheduled for {mealType}.</li>
                         )}
                     </ul>
                 </div>

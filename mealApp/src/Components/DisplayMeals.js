@@ -42,10 +42,6 @@ function DisplayMeals() {
         fetchMeals();
     }, []);
 
-    
-    
-    
-
     const addMeal = (Time, sharedData) => {
         if(sharedData){
             addMealtoSchedule(Time, sharedData)
@@ -54,7 +50,6 @@ function DisplayMeals() {
         }
     }
 
-   
     // Function to filter meals by ingredients
     const filterMeals = () => {
         if (filter.trim() === '') {
@@ -105,7 +100,11 @@ function DisplayMeals() {
                 </>
             )}
             <ScrollingBox selectedItem={sharedData}></ScrollingBox>
-            <Link to="/DisplayScedule/" onClick={() => addMeal(Time, sharedData)}>Select</Link>
+            {Time ? (
+                <Link to="/DisplayScedule/" onClick={() => addMeal(Time, sharedData)}>Select</Link>
+            ):(
+                <div></div>
+            )}
         </div>
     );
 }
