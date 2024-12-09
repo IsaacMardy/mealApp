@@ -4,6 +4,7 @@ import ScrollingBox from './ScrollingBox'
 import { getAllMeals } from '../Services/MealServices';
 import { Link } from "react-router-dom";
 import { addMealtoSchedule } from '../Services/SelectedSchedule';
+import { addRecommendation } from '../Services/DieticianServices'; // New service for recommendations
 import { useParams } from 'react-router-dom';
 
 function DisplayMeals() {
@@ -14,6 +15,8 @@ function DisplayMeals() {
     const [error, setError] = useState(null); // State to handle errors
     const [filter, setFilter] = useState(''); // State for the ingredient filter
     const [filteredMeals, setFilteredMeals] = useState([]); // State for filtered meals
+    const [isDietician, setIsDietician] = useState(false); // State to check if user is a dietician
+    const [recommendation, setRecommendation] = useState(""); // State to
 
 
     // Function to update shared data
@@ -31,6 +34,8 @@ function DisplayMeals() {
                 const fetchedMeals = await getAllMeals();
                 setMeals(fetchedMeals);
                 setFilteredMeals(fetchedMeals);
+                const userRole = await checkUserRole();
+                setIsDietician(userRole === "dietician");
             } catch (error) {
                 console.error('Error fetching meals:', error);
                 setError('Failed to load meals.');
@@ -76,6 +81,22 @@ function DisplayMeals() {
         setFilter('');
     };
 
+     // Function to handle recommendation submission
+    const handleRecommendationSubmit = async () => {
+        if (sharedData && recommendation.trim() !== "") {
+            try {
+                await addRecommendation(sharedData, recommendation);
+                alert("Recommendation added successfully!");
+                setRecommendation(""); // Clear the input field
+            } catch (error) {
+                console.error("Error adding recommendation:", error);
+                alert("Failed to add recommendation. Please try again.");
+            }
+        } else {
+            alert("Please select a meal and add a recommendation.");
+        }
+    };
+
     // fix box and list size
    
     return (
@@ -106,6 +127,20 @@ function DisplayMeals() {
             )}
             <ScrollingBox selectedItem={sharedData}></ScrollingBox>
             <Link to="/DisplayScedule/" onClick={() => addMeal(Time, sharedData)}>Select</Link>
+
+            {isDietician && (
+                <div style={{ marginTop: "20px" }}>
+                    <h2>Add a Recommendation</h2>
+                    <textarea
+                        rows="4"
+                        cols="50"
+                        placeholder="Write your recommendation here..."
+                        value={recommendation}
+                        onChange={(e) => setRecommendation(e.target.value)}
+                    />
+                    <button onClick={handleRecommendationSubmit}>Submit Recommendation</button>
+                </div>
+            )}
         </div>
     );
 }
