@@ -4,7 +4,7 @@ function SelectSchedule() {
 
     return (
         <div>
-            <Link>Select Schedule</Link>
+            {/* <Link>Select Schedule</Link> */}
             <br></br>
             <Link to="/DisplayScedule/">Make Schedule</Link>
         </div>
