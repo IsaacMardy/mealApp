@@ -515,3 +515,9 @@ app.get('/getDieticianDetail', async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+app.get('/getUserRole', authenticateUser, (req, res) => {
+    const user = req.user; // Assuming user info is attached to the request
+    res.json({ role: user.role });
+});
+
