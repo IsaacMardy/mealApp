@@ -25,7 +25,7 @@ function DisplayMeals() {
     };
 
 
-    // Fetch all meals
+    // Fetch all meals and check user role
     useEffect(() => {
         const fetchMeals = async () => {
             setLoading(true);
@@ -34,6 +34,7 @@ function DisplayMeals() {
                 const fetchedMeals = await getAllMeals();
                 setMeals(fetchedMeals);
                 setFilteredMeals(fetchedMeals);
+                
                 const userRole = await checkUserRole();
                 setIsDietician(userRole === "dietician");
             } catch (error) {
