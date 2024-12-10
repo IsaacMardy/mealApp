@@ -516,7 +516,7 @@ app.get('/getDieticianDetail', async (req, res) => {
     }
 });
 
-app.get('/getUserRole', authenticateUser, (req, res) => {
+app.get('/checkUserRole', authenticateUser, (req, res) => {
     const user = req.user; // Assuming user info is attached to the request
     res.json({ role: user.role });
 });

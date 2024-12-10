@@ -127,20 +127,21 @@ function DisplayMeals() {
                 <Link to="/DisplayScedule/" onClick={() => addMeal(Time, sharedData)}>Select</Link>
             ):(
                 <div></div>
-              
-              {isDietician && (
-                <div style={{ marginTop: "20px" }}>
-                    <h2>Add a Recommendation</h2>
-                    <textarea
-                        rows="4"
-                        cols="50"
-                        placeholder="Write your recommendation here..."
-                        value={recommendation}
-                        onChange={(e) => setRecommendation(e.target.value)}
-                    />
-                    <button onClick={handleRecommendationSubmit}>Submit Recommendation</button>
-                </div>
             )}
+              {isDietician && (
+                  <div style={{ marginTop: "20px" }}>
+                      <h2>Add a Recommendation</h2>
+                      <textarea
+                          rows="4"
+                          cols="50"
+                          placeholder="Write your recommendation here..."
+                          value={recommendation}
+                          onChange={(e) => setRecommendation(e.target.value)}
+                      />
+                      <button onClick={handleRecommendationSubmit}>Submit Recommendation</button>
+                  </div>
+            )
+        }
         </div>
     );
 }
